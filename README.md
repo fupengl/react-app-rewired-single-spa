@@ -18,16 +18,20 @@ This project is based on [`react-app-rewired`](https://github.com/timarney/react
 /* config-overrides.js */
 
 const rewiredSingleSpa = require("react-app-rewired-single-spa");
+const { rewiredSingleSpaDevServer } = require("react-app-rewired-single-spa");
 
-module.exports = function override(config, env) {
-  // your config ...
-  return rewiredSingleSpa()(config, env);
+module.exports = {
+  webpack: rewiredSingleSpa(),
+  devServer: rewiredSingleSpaDevServer,
 };
 
 // use `customize-cra`
 const { override } = require("customize-cra");
 
-module.exports = override(rewiredSingleSpa());
+module.exports = {
+  webpack: override(rewiredSingleSpa()),
+  devServer: rewiredSingleSpaDevServer,
+};
 ```
 
 ## License

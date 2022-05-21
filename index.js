@@ -5,8 +5,18 @@ const webpack = require("webpack");
 const SystemJSPublicPathPlugin = require("systemjs-webpack-interop/SystemJSPublicPathWebpackPlugin");
 
 module.exports = rewiredSingleSpa;
+exports.rewiredSingleSpaDevServer = rewiredSingleSpaDevServer;
 
-function rewiredSingleSpa({ orgName, projectName, entry, outputFilename, rootDirectoryLevel }) {
+function rewiredSingleSpa({
+    orgName,
+    projectName,
+    entry,
+    outputFilename,
+    rootDirectoryLevel,
+    reactPackagesAsExternal,
+    orgPackagesAsExternal,
+    peerDepsAsExternal,
+}) {
     if (typeof orgName !== "string") {
         throw Error(
             `react-app-rewired-single-spa params requires "orgName" string`
@@ -19,18 +29,19 @@ function rewiredSingleSpa({ orgName, projectName, entry, outputFilename, rootDir
     }
 
     const webpackMajorVersion = getWebpackMajorVersion();
-    const defaultPKGName = `${orgName}-${projectName}`;
+    const combinedName = `${orgName}-${projectName}`;
+    const pkgJson = require(paths.appPackageJson);
 
-    const entry =
-        entry ||
-        getExistFile({
+    const inputEntry = entry
+        ? path.resolve(entry)
+        : getExistFile({
             cwd: process.cwd(),
-            returnRelative,
+            returnRelative: true,
             files: [
-                `src/${defaultPKGName}.jsx`,
-                `src/${defaultPKGName}.tsx`,
-                `src/${defaultPKGName}.js`,
-                `src/${defaultPKGName}.ts`,
+                `src/${combinedName}.jsx`,
+                `src/${combinedName}.tsx`,
+                `src/${combinedName}.js`,
+                `src/${combinedName}.ts`,
                 "src/index.jsx",
                 "src/index.tsx",
                 "src/index.ts",
@@ -45,7 +56,7 @@ function rewiredSingleSpa({ orgName, projectName, entry, outputFilename, rootDir
         // amend input output
         config.output = {
             ...config.output,
-            filename: `${outputFilename}${isEnvProduction ? ".[contenthash:8]" : ""
+            filename: `${outputFilename || combinedName}${isEnvProduction ? ".[contenthash:8]" : ""
                 }.js`,
             publicPath: paths.publicUrlOrPath,
             libraryTarget: "system",
@@ -54,14 +65,22 @@ function rewiredSingleSpa({ orgName, projectName, entry, outputFilename, rootDir
         if (webpackMajorVersion < 5) {
             // support reactFastRefresh
             config.entry = isEnvProduction
-                ? entry
-                : [require.resolve("react-dev-utils/webpackHotDevClient"), entry];
-            config.jsonpFunction = `webpackJsonp_${safeVarName(projectName)}`;
-            config.hotUpdateFunction = `webpackHotUpdate_${safeVarName(projectName)}`;
+                ? inputEntry
+                : [require.resolve("react-dev-utils/webpackHotDevClient"), inputEntry];
+            config.output.jsonpFunction = `webpackJsonp_${safeVarName(projectName)}`;
+            config.output.hotUpdateFunction = `webpackHotUpdate_${safeVarName(
+                projectName
+            )}`;
         } else {
-            config.entry = entry;
-            config.chunkLoadingGlobal = `webpackJsonp_${safeVarName(projectName)}`;
-            config.hotUpdateGlobal = `webpackHotUpdate_${safeVarName(projectName)}`;
+            config.entry = inputEntry;
+            config.output.chunkLoadingGlobal = `webpackJsonp_${safeVarName(
+                projectName
+            )}`;
+            config.output.hotUpdateGlobal = `webpackHotUpdate_${safeVarName(
+                projectName
+            )}`;
+            // window will become globalThis
+            config.output.globalObject = "self";
         }
 
         // amend module
@@ -76,24 +95,87 @@ function rewiredSingleSpa({ orgName, projectName, entry, outputFilename, rootDir
             cacheGroups: { default: false },
         };
         if (webpackMajorVersion < 5) {
-            config.optimization.moduleIds = true;
-            config.optimization.chunkIds = true;
+            config.optimization.namedModules = true;
+            config.optimization.namedChunks = true;
         } else {
             config.optimization.moduleIds = "named";
             config.optimization.chunkIds = "named";
         }
-        delete optimization.runtimeChunk;
+        delete config.optimization.runtimeChunk;
 
         // amend plugins
-        config.plugins = config.plugins.filter((plugin) => {
-            return !['HtmlWebpackPlugin', 'GenerateSW', 'InterpolateHtmlPlugin'].includes(
-                plugin.constructor.name,
-            );
+        const plugins = config.plugins.filter((plugin) => {
+            return ![
+                "HtmlWebpackPlugin",
+                "GenerateSW",
+                "InterpolateHtmlPlugin",
+                "MiniCssExtractPlugin",
+            ].includes(plugin.constructor.name);
         });
-        config.plugins.push(new SystemJSPublicPathPlugin({
-            systemjsModuleName: `@${orgName}/${projectName}`,
-            rootDirectoryLevel: rootDirectoryLevel
-        }))
+        plugins.push(
+            new SystemJSPublicPathPlugin({
+                systemjsModuleName: `@${orgName}/${projectName}`,
+                rootDirectoryLevel: rootDirectoryLevel,
+            })
+        );
+        config.plugins = plugins;
+
+        // process externals
+        const externals = [];
+        if (config.externals) {
+            if (Array.isArray(config.externals)) {
+                externals.push(...config.externals);
+            } else {
+                externals.push(config.externals);
+            }
+        }
+        if (!!reactPackagesAsExternal) {
+            externals.push("react", "react-dom");
+        }
+        if (!!orgPackagesAsExternal) {
+            externals.push(new RegExp(`^@${orgName}/`));
+        }
+        if (!!peerDepsAsExternal) {
+            externals.push(...Object.keys(pkgJson.peerDepsAsExternal || {}));
+        }
+        externals.push("single-spa");
+        config.externals = externals;
+
+        // process alias
+        if (webpackMajorVersion < 5) {
+            Object.assign(config.resolve.alias, {
+                // alias parcel
+                "single-spa-react/parcel": "single-spa-react/lib/esm/parcel.js",
+            });
+        }
+
+        disableCSSExtraction(config);
+
+        return config;
+    };
+}
+
+function rewiredSingleSpaDevServer(configFunction) {
+    const webpackMajorVersion = getWebpackMajorVersion();
+
+    return function (proxy, allowedHost) {
+        const config = configFunction(proxy, allowedHost);
+
+        config.historyApiFallback = true;
+        if (webpackMajorVersion < 5) {
+            config.headers = {
+                ...config.headers,
+                "Access-Control-Allow-Origin": "*",
+            };
+            config.compress = true;
+        } else {
+            config.allowedHosts = "all";
+            config.webSocketServer = {
+                type: "ws",
+                options: { path: process.env.WDS_SOCKET_PATH || "/ws" },
+            };
+        }
+        return config;
     };
 }
 
@@ -110,6 +192,23 @@ function getExistFile({ cwd, files, returnRelative }) {
         const absFilePath = path.join(cwd, file);
         if (fs.existsSync(absFilePath)) {
             return returnRelative ? file : absFilePath;
+        }
+    }
+}
+
+function disableCSSExtraction(config) {
+    for (const rule of config.module.rules) {
+        if (rule.oneOf) {
+            rule.oneOf.forEach((x) => {
+                if (x.use && Array.isArray(x.use)) {
+                    x.use.forEach((use) => {
+                        if (use.loader && use.loader.includes("mini-css-extract-plugin")) {
+                            use.loader = require.resolve("style-loader/dist/cjs.js");
+                            delete use.options;
+                        }
+                    });
+                }
+            });
         }
     }
 }
