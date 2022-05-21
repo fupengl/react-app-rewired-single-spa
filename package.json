@@ -1,0 +1,43 @@
+{
+  "name": "react-app-rewired-single-spa",
+  "version": "0.0.10",
+  "description": "Use single-spa in your create-react-app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "npx standard-version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fupengl/react-app-rewired-single-spa.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "react-scripts",
+    "react-app",
+    "single-spa",
+    "react-app-rewired",
+    "customize-cra"
+  ],
+  "license": "ISC",
+  "author": {
+    "name": "fupengl",
+    "email": "fupenglxy@gmail.com",
+    "url": "https://github.com/fupengl"
+  },
+  "bugs": {
+    "url": "https://github.com/fupengl/react-app-rewired-single-spa/issues"
+  },
+  "homepage": "https://github.com/fupengl/react-app-rewired-single-spa#readme",
+  "dependencies": {
+    "systemjs-webpack-interop": "^2.3.5"
+  },
+  "devDependencies": {
+    "react-scripts": "5.0.1"
+  },
+  "peerDependencies": {
+    "react-scripts": "^5.0.0"
+  }
+}
