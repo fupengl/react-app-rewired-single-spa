@@ -2,7 +2,7 @@
 
 Use `single-spa` `systemjs` in your `create-react-app`.
 
-> It is recommended to use the development mode to ensure stability !!!
+> Quickly adapt cra as a submodule of single-spa !!!
 
 ## Installation
 
@@ -22,15 +22,20 @@ const { rewiredSingleSpaDevServer } = require("react-app-rewired-single-spa");
 
 module.exports = {
   webpack: rewiredSingleSpa(),
-  devServer: rewiredSingleSpaDevServer,
+  devServer: function (configFunction) {
+    return function (proxy, allowedHost) {
+      const config = configFunction(proxy, allowedHost);
+      return rewiredSingleSpaDevServer()(config);
+    };
+  },
 };
 
 // use `customize-cra`
-const { override } = require("customize-cra");
+const { override, overrideDevServer } = require("customize-cra");
 
 module.exports = {
   webpack: override(rewiredSingleSpa()),
-  devServer: rewiredSingleSpaDevServer,
+  devServer: overrideDevServer(rewiredSingleSpaDevServer()),
 };
 ```
 

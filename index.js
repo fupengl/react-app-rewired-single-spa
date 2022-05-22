@@ -49,9 +49,8 @@ function rewiredSingleSpa({
             ],
         });
 
-    return function (config, webpackEnv) {
-        const isEnvProduction =
-            (webpackEnv || process.env.BABEL_ENV) === "production";
+    return function (config, webpackEnv = process.env.BABEL_ENV) {
+        const isEnvProduction = webpackEnv === "production";
 
         // amend input output
         config.output = {
@@ -155,12 +154,10 @@ function rewiredSingleSpa({
     };
 }
 
-function rewiredSingleSpaDevServer(configFunction) {
+function rewiredSingleSpaDevServer() {
     const webpackMajorVersion = getWebpackMajorVersion();
 
-    return function (proxy, allowedHost) {
-        const config = configFunction(proxy, allowedHost);
-
+    return function (config) {
         config.historyApiFallback = true;
         if (webpackMajorVersion < 5) {
             config.headers = {
