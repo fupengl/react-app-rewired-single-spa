@@ -16,7 +16,6 @@ This project is based on [`react-app-rewired`](https://github.com/timarney/react
 
 ```js
 /* config-overrides.js */
-
 const {
   rewiredSingleSpa,
   rewiredSingleSpaDevServer,

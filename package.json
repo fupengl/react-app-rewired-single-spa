@@ -39,6 +39,6 @@
   },
   "peerDependencies": {
     "react-scripts": "5.x || 4.x",
-    "react-app-rewired": "*"
+    "react-app-rewired": "2.x"
   }
 }
