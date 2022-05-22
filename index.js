@@ -150,6 +150,28 @@ function rewiredSingleSpa({
 
         disableCSSExtraction(config);
 
+        // for wp5
+        // https://stackoverflow.com/questions/64557638/how-to-polyfill-node-core-modules-in-webpack-5
+        if (webpackMajorVersion == 5) {
+            config.plugins.push(
+                new webpack.ProvidePlugin({
+                    process: "process/browser.js",
+                    Buffer: ["buffer", "Buffer"],
+                })
+            );
+            config.resolve.fallback = Object.assign(config.resolve.fallback || {}, {
+                url: require.resolve("url"),
+                fs: require.resolve("fs"),
+                assert: require.resolve("assert"),
+                crypto: require.resolve("crypto-browserify"),
+                http: require.resolve("stream-http"),
+                https: require.resolve("https-browserify"),
+                os: require.resolve("os-browserify/browser"),
+                buffer: require.resolve("buffer"),
+                stream: require.resolve("stream-browserify"),
+            });
+        }
+
         return config;
     };
 }
