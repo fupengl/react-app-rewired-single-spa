@@ -17,8 +17,10 @@ This project is based on [`react-app-rewired`](https://github.com/timarney/react
 ```js
 /* config-overrides.js */
 
-const rewiredSingleSpa = require("react-app-rewired-single-spa");
-const { rewiredSingleSpaDevServer } = require("react-app-rewired-single-spa");
+const {
+  rewiredSingleSpa,
+  rewiredSingleSpaDevServer,
+} = require("react-app-rewired-single-spa");
 
 module.exports = {
   webpack: rewiredSingleSpa(),

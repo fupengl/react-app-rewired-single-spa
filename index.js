@@ -4,8 +4,8 @@ const { paths } = require("react-app-rewired");
 const webpack = require("webpack");
 const SystemJSPublicPathPlugin = require("systemjs-webpack-interop/SystemJSPublicPathWebpackPlugin");
 
-module.exports = rewiredSingleSpa;
-exports.rewiredSingleSpaDevServer = rewiredSingleSpaDevServer;
+module.exports.rewiredSingleSpa = rewiredSingleSpa;
+module.exports.rewiredSingleSpaDevServer = rewiredSingleSpaDevServer;
 
 function rewiredSingleSpa({
     orgName,
