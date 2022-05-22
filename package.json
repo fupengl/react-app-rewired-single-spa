@@ -1,6 +1,6 @@
 {
   "name": "react-app-rewired-single-spa",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Use single-spa in your create-react-app",
   "main": "index.js",
   "scripts": {
