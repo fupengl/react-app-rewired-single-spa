@@ -239,7 +239,7 @@ function getFallbackObj(obj) {
     const res = {};
     for (const [k, v] of Object.entries(obj)) {
         try {
-            const p = v;
+            const p = require.resolve(v);
             url && (res[k] = p);
         } catch (e) { }
     }
