@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.6 (2022-05-24)
+
+
+### Bug Fixes
+
+* pnpm style-loader path ([0a64a99](https://github.com/fupengl/react-app-rewired-single-spa/commit/0a64a996ba88c7c0057b707ec5d84e00c02d418d))
+
 ### 0.0.5 (2022-05-24)
 
 ### 0.0.4 (2022-05-22)
