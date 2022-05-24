@@ -225,7 +225,7 @@ function disableCSSExtraction(config) {
                 if (x.use && Array.isArray(x.use)) {
                     x.use.forEach((use) => {
                         if (use.loader && use.loader.includes("mini-css-extract-plugin")) {
-                            use.loader = "style-loader/dist/cjs.js";
+                            use.loader = require.resolve("style-loader/dist/cjs.js");
                             delete use.options;
                         }
                     });
