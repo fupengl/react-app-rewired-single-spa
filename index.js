@@ -65,7 +65,7 @@ function rewiredSingleSpa({
             // support reactFastRefresh
             config.entry = isEnvProduction
                 ? inputEntry
-                : [require.resolve("react-dev-utils/webpackHotDevClient"), inputEntry];
+                : ["react-dev-utils/webpackHotDevClient", inputEntry];
             config.output.jsonpFunction = `webpackJsonp_${safeVarName(projectName)}`;
             config.output.hotUpdateFunction = `webpackHotUpdate_${safeVarName(
                 projectName
@@ -159,17 +159,20 @@ function rewiredSingleSpa({
                     Buffer: ["buffer", "Buffer"],
                 })
             );
-            config.resolve.fallback = Object.assign(config.resolve.fallback || {}, {
-                url: require.resolve("url"),
-                fs: require.resolve("fs"),
-                assert: require.resolve("assert"),
-                crypto: require.resolve("crypto-browserify"),
-                http: require.resolve("stream-http"),
-                https: require.resolve("https-browserify"),
-                os: require.resolve("os-browserify/browser"),
-                buffer: require.resolve("buffer"),
-                stream: require.resolve("stream-browserify"),
-            });
+            config.resolve.fallback = Object.assign(
+                config.resolve.fallback || {},
+                getFallbackObj({
+                    url: "url",
+                    fs: "fs",
+                    assert: "assert",
+                    crypto: "crypto-browserify",
+                    http: "stream-http",
+                    https: "https-browserify",
+                    os: "os-browserify/browser",
+                    buffer: "buffer",
+                    stream: "stream-browserify",
+                })
+            );
         }
 
         return config;
@@ -222,7 +225,7 @@ function disableCSSExtraction(config) {
                 if (x.use && Array.isArray(x.use)) {
                     x.use.forEach((use) => {
                         if (use.loader && use.loader.includes("mini-css-extract-plugin")) {
-                            use.loader = require.resolve("style-loader/dist/cjs.js");
+                            use.loader = "style-loader/dist/cjs.js";
                             delete use.options;
                         }
                     });
@@ -230,4 +233,15 @@ function disableCSSExtraction(config) {
             });
         }
     }
+}
+
+function getFallbackObj(obj) {
+    const res = {};
+    for (const [k, v] of Object.entries(obj)) {
+        try {
+            const p = v;
+            url && (res[k] = p);
+        } catch (e) { }
+    }
+    return res;
 }
