@@ -137,7 +137,7 @@ The following packages have been integrated by default, and the specified depend
 
 You can use `customize-cra` `removeModuleScopePlugin()`
 
-### react@5.x postcss plugin error
+### react-scripts@5.x postcss plugin error
 
 You can use `customize-cra`
 
