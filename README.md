@@ -88,7 +88,7 @@ This is the rootDirectoryLevel that is passed to https://github.com/joeldenning/
 
 ### reactPackagesAsExternal
 
-Type: `boolean`
+Type: `boolean`  
 This will `react` `react-dom` as webpack externals or not.
 
 ### orgPackagesAsExternal
@@ -98,7 +98,7 @@ This changes whether package names that start with @your-org-name are treated as
 
 ### peerDepsAsExternal
 
-Type: `boolean`
+Type: `boolean`  
 This will package.json `peerDependencies` as webpack externals or not.
 
 ## FQA
@@ -136,6 +136,17 @@ The following packages have been integrated by default, and the specified depend
 ### You attempted to import XXXXXXXX which falls outside of the project src/ directory
 
 You can use `customize-cra` `removeModuleScopePlugin()`
+
+### react@5.x postcss plugin error
+
+You can use `customize-cra`
+
+```js
+adjustStyleLoaders(({ use: [, , postcss] }) => {
+  const postcssOptions = postcss.options;
+  postcss.options = { postcssOptions };
+});
+```
 
 ## License
 
