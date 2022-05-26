@@ -51,6 +51,7 @@ function rewiredSingleSpa({
 
     return function (config, webpackEnv = process.env.BABEL_ENV) {
         const isEnvProduction = webpackEnv === "production";
+        const isFastRefresh = process.env.FAST_REFRESH !== "false";
 
         // amend input output
         config.output = {
@@ -63,9 +64,10 @@ function rewiredSingleSpa({
         };
         if (webpackMajorVersion < 5) {
             // support reactFastRefresh
-            config.entry = isEnvProduction
-                ? inputEntry
-                : ["react-dev-utils/webpackHotDevClient", inputEntry];
+            config.entry =
+                isEnvProduction || !isFastRefresh
+                    ? inputEntry
+                    : ["react-dev-utils/webpackHotDevClient", inputEntry];
             config.output.jsonpFunction = `webpackJsonp_${safeVarName(projectName)}`;
             config.output.hotUpdateFunction = `webpackHotUpdate_${safeVarName(
                 projectName
