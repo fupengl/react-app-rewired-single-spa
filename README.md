@@ -2,6 +2,13 @@
 
 Use `single-spa` `systemjs` in your `create-react-app`.
 
+[npm]: https://img.shields.io/npm/v/react-app-rewired-single-spa
+[npm-url]: https://www.npmjs.com/package/react-app-rewired-single-spa
+[download]: http://img.shields.io/npm/dm/react-app-rewired-single-spa.svg?style=flat
+
+[![npm][npm]][npm-url]
+[![NPM downloads][download]][npm-url]
+
 > Quickly adapt `react-scripts` as a submodule of single-spa !!!  
 > Support `react-scripts@4.x` `react-scripts@5.x` version.
 
