@@ -21,6 +21,9 @@
     "react-app-rewired",
     "customize-cra"
   ],
+  "files": [
+    "index.js"
+  ],
   "license": "ISC",
   "author": {
     "name": "fupengl",
