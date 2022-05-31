@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.14 (2022-05-31)
+
+
+### Bug Fixes
+
+* wp5 nodebuildin modules ([a5a6345](https://github.com/fupengl/react-app-rewired-single-spa/commit/a5a63458555d911bcc7e65ed9da29ff176251378))
+
 ### 0.0.13 (2022-05-31)
 
 
