@@ -137,7 +137,7 @@ function rewiredSingleSpa({
             externals.push(new RegExp(`^@${orgName}/`));
         }
         if (!!peerDepsAsExternal) {
-            externals.push(...Object.keys(pkgJson.peerDepsAsExternal || {}));
+            externals.push(...Object.keys(pkgJson.peerDependencies || {}));
         }
         externals.push("single-spa");
         config.externals = externals;
