@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.13 (2022-05-31)
+
+
+### Bug Fixes
+
+* peerDependencies ([2b1b64f](https://github.com/fupengl/react-app-rewired-single-spa/commit/2b1b64f8f485381ee6a0e76548a083b9d33b30f9))
+
 ### 0.0.12 (2022-05-29)
 
 ### 0.0.11 (2022-05-26)
