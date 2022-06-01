@@ -19,7 +19,7 @@ jobs:
       - run: |
           git config --local user.email "fupenglxy@gmail.com"
           git config --local user.name "fupengl"
-      - run: npm run release
+      - run: npm run release -- --release-as minor
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
